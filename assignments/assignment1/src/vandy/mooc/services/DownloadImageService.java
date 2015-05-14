@@ -76,7 +76,13 @@ public class DownloadImageService extends IntentService {
     	// the directory pathname as an "extra" to the intent
         // to tell the Service where to place the image within
         // external storage.
-        return null;
+    	Intent downloadImageServiceIntent = new Intent();
+    	downloadImageServiceIntent.setData(url);
+    	downloadImageServiceIntent.putExtra(REQUEST_CODE, requestCode);
+    	downloadImageServiceIntent.putExtra(MESSENGER, new Messenger(downloadHandler));
+    	downloadImageServiceIntent.putExtra(DIRECTORY_PATHNAME, directoryPathname);
+    	
+    	return downloadImageServiceIntent;
     }
 
     /**
