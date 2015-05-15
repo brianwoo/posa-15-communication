@@ -1,5 +1,9 @@
 package vandy.mooc.services;
 
+import java.net.URI;
+
+import vandy.mooc.activities.MainActivity;
+import vandy.mooc.operations.ImageOps;
 import vandy.mooc.utils.Utils;
 import android.app.Activity;
 import android.app.IntentService;
@@ -76,7 +80,7 @@ public class DownloadImageService extends IntentService {
     	// the directory pathname as an "extra" to the intent
         // to tell the Service where to place the image within
         // external storage.
-    	Intent downloadImageServiceIntent = new Intent();
+    	Intent downloadImageServiceIntent = new Intent(context, DownloadImageService.class);
     	downloadImageServiceIntent.setData(url);
     	downloadImageServiceIntent.putExtra(REQUEST_CODE, requestCode);
     	downloadImageServiceIntent.putExtra(MESSENGER, new Messenger(downloadHandler));
@@ -122,6 +126,18 @@ public class DownloadImageService extends IntentService {
         return data.getString(IMAGE_URL);
     }
 
+    
+    private String getDirectoryPathName(Bundle data) {
+        // Extract the directory pathname from the bundle.
+        return data.getString(DIRECTORY_PATHNAME);
+    }
+    
+    
+    private Messenger getMessengerFromBundle(Bundle data) {
+    	// Extract the Messenger from the bundle
+        return data.getParcelable(MESSENGER);
+    }
+    
     /**
      * Hook method dispatched by the IntentService framework to
      * download the image requested via data in an intent, store the
@@ -133,20 +149,30 @@ public class DownloadImageService extends IntentService {
     public void onHandleIntent(Intent intent) {
         // Get the URL associated with the Intent data.
         // @@ TODO -- you fill in here.
+    	Bundle data = intent.getExtras();
+    	Uri uriImageToDownload = intent.getData();
 
         // Get the directory pathname where the image will be stored.
         // @@ TODO -- you fill in here.
+    	String dirPathName = getDirectoryPathName(data);
 
         // Download the requested image.
         // @@ TODO -- you fill in here.
+    	Uri downloadedImage = Utils.downloadImage(
+    			getApplicationContext(), 
+    			uriImageToDownload, 
+    			dirPathName);
 
         // Extract the Messenger stored as an extra in the
         // intent under the key MESSENGER.
         // @@ TODO -- you fill in here.
+    	Messenger messenger = getMessengerFromBundle(data);
 
         // Send the path to the image file back to the
         // MainActivity via the messenger.
         // @@ TODO -- you fill in here.
+    	sendPath(messenger, downloadedImage, Uri.parse(dirPathName));
+    	
     }
 
     /**
@@ -159,10 +185,19 @@ public class DownloadImageService extends IntentService {
         // Call the makeReplyMessage() factory method to create
         // Message.
         // @@ TODO -- you fill in here.
+    	Message msg = makeReplyMessage(pathToImageFile, url);
         
-            // Send the path to the image file back to the
-            // MainActivity.
-            // @@ TODO -- you fill in here.
+        // Send the path to the image file back to the
+        // MainActivity.
+        // @@ TODO -- you fill in here.
+    	try
+		{
+			messenger.send(msg);
+		}
+		catch (RemoteException e)
+		{
+			e.printStackTrace();
+		}
     }
 
     /**
@@ -176,21 +211,33 @@ public class DownloadImageService extends IntentService {
 
         // Create a new Bundle to handle the result.
         // @@ TODO -- you fill in here.
+        Bundle bundle = new Bundle();
 
-        // Put the URL to the image file into the Bundle via the
-        // IMAGE_URL key.
-        // @@ TODO -- you fill in here.
-
-        // Return the result to indicate whether the download
-        // succeeded or failed.
-        // @@ TODO -- you fill in here.
-
-        // Put the path to the image file into the Bundle via the
-        // IMAGE_PATHNAME key only if the download succeeded.
-        // @@ TODO -- you fill in here.
-
+        if (pathToImageFile != null)
+        {
+            // Put the URL to the image file into the Bundle via the
+            // IMAGE_URL key.
+            // @@ TODO -- you fill in here.
+            bundle.putString(IMAGE_URL, pathToImageFile.toString());
+            
+            // Return the result to indicate whether the download
+            // succeeded or failed.
+            // @@ TODO -- you fill in here.
+            message.arg1 = Activity.RESULT_OK;	
+            
+            // Put the path to the image file into the Bundle via the
+            // IMAGE_PATHNAME key only if the download succeeded.
+            // @@ TODO -- you fill in here.
+            bundle.putString(IMAGE_PATHNAME, url.toString());
+        }
+        else
+        {
+        	message.arg1 = Activity.RESULT_CANCELED;
+        }
+                       
         // Set the Bundle to be the data in the message.
         // @@ TODO -- you fill in here.
+        message.setData(bundle);
 
         return message;
     }
