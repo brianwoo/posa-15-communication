@@ -39,6 +39,9 @@ public class RetainedFragmentManager {
      */ 
     public RetainedFragmentManager(FragmentManager fragmentManager,
                                    String retainedFragmentTag) {
+    	
+    	System.out.println("------ CREATE NEW RetainedFragmentManager -------");
+    	
         // Store a WeakReference to the Activity.
         mFragmentManager =
             new WeakReference<FragmentManager>(fragmentManager);
