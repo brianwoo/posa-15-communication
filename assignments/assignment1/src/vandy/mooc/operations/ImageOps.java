@@ -194,6 +194,7 @@ public class ImageOps {
               + url.toString());
 
         // Start the service.
+        System.out.println("---- start DownloadImageService ----");
         mActivity.get().startService(intent);
     }
 

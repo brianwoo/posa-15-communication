@@ -158,6 +158,18 @@ public class Utils {
                   "external storage is not writable");
             return null;
         }
+        
+        // TODO: BRIAN take out this download delay
+        try
+		{
+			Thread.sleep(30000);
+		}
+		catch (InterruptedException e1)
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        
 
         // If we're offline, open the image in our resources.
         if (DOWNLOAD_OFFLINE) {

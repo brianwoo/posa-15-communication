@@ -48,7 +48,7 @@ public class ServiceResultHandler extends Handler {
     @Override
     public void handleMessage(Message message) {
         Log.d(TAG,
-              "handleMessage() called back");
+              "------- handleMessage() called back -----");
 
         final int requestCode =
             DownloadImageService.getRequestCode(message);
