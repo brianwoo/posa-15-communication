@@ -160,6 +160,7 @@ public class Utils {
         }
         
         // TODO: BRIAN take out this download delay
+/*
         try
 		{
 			Thread.sleep(30000);
@@ -169,7 +170,7 @@ public class Utils {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-        
+  */      
 
         // If we're offline, open the image in our resources.
         if (DOWNLOAD_OFFLINE) {
