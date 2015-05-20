@@ -1,3 +1,7 @@
+/**
+ * This software is intended for educational purposes and there is no
+ * warranty, so use at your own risk.
+ */
 package vandy.mooc.utils;
 
 import java.io.File;
@@ -291,6 +295,11 @@ public class Utils {
             // Bail out of we get an invalid bitmap.
             if (url == null)
                 return null;
+            
+            // Bail if the fileName is null as well.
+            if (fileName == null) {
+            	return null;
+            }
 
             // Create a directory path.
             File directoryPath = new File(directoryPathname);
@@ -307,7 +316,19 @@ public class Utils {
             // Delete the file if it already exists.
             if (filePath.exists())
                 filePath.delete();
-
+                
+            // Pre-validate file.
+            try (InputStream is = (InputStream) url.getContent()) {
+                 BitmapFactory.Options options = 
+                     new BitmapFactory.Options();
+                 options.inJustDecodeBounds = true;
+                 BitmapFactory.decodeStream(is, null, options);
+                 if (options.outMimeType == null)
+                     return null;
+            } catch (Exception e) {
+               	return null; // Indicate a failure.
+            }
+            
             // Get the content of the resource at the url and save it
             // to an output file.
             try (InputStream is = (InputStream) url.getContent();
@@ -323,7 +344,8 @@ public class Utils {
             Log.d(TAG,
                   "absolute path to image file is " 
                   + absolutePathToImage);
-            
+
+            // Return the absolute path to the image file.
             return Uri.parse(absolutePathToImage);
         } catch (Exception e) {
             e.printStackTrace();
@@ -332,7 +354,7 @@ public class Utils {
     }
 
     /**
-     * This method checks if we can write image to external storage
+     * This method checks if we can write image to external storage.
      * 
      * @return true if an image can be written, and false otherwise
      */
@@ -351,13 +373,15 @@ public class Utils {
      *          String containing the unique temporary filename.
      */
     static private String getUniqueFilename(final String filename) {
+    	
         return Base64.encodeToString((filename
-                                      + System.currentTimeMillis()).getBytes(),
+                                      + System.currentTimeMillis()
+                                      + Thread.currentThread().getName()).getBytes(),
                                       Base64.NO_WRAP);
         // Use this implementation if you don't want to keep filling
         // up your file system with temp files..
         // 
-        // return Base64.encodeToString(filename, Base64.NO_WRAP);
+        // return Base64.encodeToString(filename.getBytes(), Base64.NO_WRAP);
     }
 
     /**

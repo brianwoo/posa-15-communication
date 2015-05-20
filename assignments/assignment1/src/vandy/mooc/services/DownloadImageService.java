@@ -147,6 +147,9 @@ public class DownloadImageService extends IntentService {
      */
     @Override
     public void onHandleIntent(Intent intent) {
+    	
+    	System.out.println("---- DownloadImageService onHandleIntent() ----");
+    	
         // Get the URL associated with the Intent data.
         // @@ TODO -- you fill in here.
     	Bundle data = intent.getExtras();
@@ -192,6 +195,7 @@ public class DownloadImageService extends IntentService {
         // @@ TODO -- you fill in here.
     	try
 		{
+    		System.out.println("------ DownloadImageService SendPath back to Activity ------");
 			messenger.send(msg);
 		}
 		catch (RemoteException e)
