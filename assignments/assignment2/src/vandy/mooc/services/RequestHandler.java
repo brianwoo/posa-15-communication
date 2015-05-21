@@ -58,6 +58,10 @@ class RequestHandler extends Handler {
      * Messenger passed with the message.
      */
     public void handleMessage(Message message) {
+    	
+    	System.out.println("----- Received Message to RequestHandler! -----");
+    	
+    	
         // Convert the Message into a RequestMessage.
         final RequestMessage requestMessage =
             RequestMessage.makeRequestMessage(message);
@@ -72,7 +76,7 @@ class RequestHandler extends Handler {
 
         // Get the directory pathname where the image will be stored.
         // TODO -- you fill in here.
-        final String dirPathname = requestMessage.getDirectoryPathname();
+        final String dirPathname = requestMessage.getImagePathname();
 
         // Get the requestCode for the operation that was invoked by
         // the Activity.
