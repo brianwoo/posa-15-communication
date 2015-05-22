@@ -22,12 +22,12 @@
 
     <service
        android:name=".services.AcronymServiceAsync"
-       android:process=":remote">
+       android:process=":remote1"> 
     </service>
 
     <service
        android:name=".services.AcronymServiceSync"
-       android:process=":remote">
+       android:process=":remote2">
     </service>
 
   </application>
