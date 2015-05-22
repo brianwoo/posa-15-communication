@@ -153,9 +153,9 @@ public class ImageOpsBoundService extends ImageOpsImpl {
 
                 // Send the request Message to the DownloadService.
                 // TODO -- you fill in here.
-                Messenger messenger = requestMessage.getMessenger();
+                //Messenger messenger = requestMessage.getMessenger();
                 Message msg = requestMessage.getMessage();
-                messenger.send(msg);
+                mRequestMessengerRef.send(msg);
                 
             } catch (Exception e) {
                 e.printStackTrace();

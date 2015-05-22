@@ -57,12 +57,24 @@ public class ReplyMessage extends RequestReplyMessageBase {
         // Set the result code to indicate whether the download
         // succeeded or failed.
         // TODO -- you fill in here.
-        replyMessage.setResultCode(Activity.RESULT_OK);
+        int resultCode;
+        
+        if (pathToImageFile != null)
+        {
+        	resultCode = Activity.RESULT_OK;
+        	
+        	// Put the path to the image file into the Bundle
+        	// only if the download succeeded.
+        	// TODO -- you fill in here.
+        	ReplyMessage.setDirectoryPathname(bundle, pathToImageFile.toString());
+        }
+        else
+        {
+        	resultCode = Activity.RESULT_CANCELED;
+        }
 
-        // Put the path to the image file into the Bundle
-        // only if the download succeeded.
-        // TODO -- you fill in here.
-        ReplyMessage.setDirectoryPathname(bundle, pathToImageFile.toString());
+    	replyMessage.setResultCode(resultCode);
+       
 
         return replyMessage;
     }
