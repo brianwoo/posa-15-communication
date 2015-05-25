@@ -95,7 +95,7 @@ public class WeatherServiceSync extends LifecycleLoggingService
 			public List<WeatherData> getCurrentWeather(String Weather)
 					throws RemoteException
 			{
-				// TODO Auto-generated method stub
+				System.out.println("----- getCurrentWeather Sync version-----");
 				return null;
 			}
 	};

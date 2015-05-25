@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.util.Log;
 
 /**
  * @author bwoo
@@ -34,9 +35,9 @@ public class WeatherServiceAsync extends LifecycleLoggingService
     
     
     /**
-     * Called when a client (e.g., AcronymActivity) calls
+     * Called when a client (e.g., MyActivity) calls
      * bindService() with the proper Intent.  Returns the
-     * implementation of AcronymRequest, which is implicitly cast as
+     * implementation of WeatherRequest, which is implicitly cast as
      * an IBinder.
      */
     @Override
@@ -47,8 +48,8 @@ public class WeatherServiceAsync extends LifecycleLoggingService
     
     /**
      * The concrete implementation of the AIDL Interface
-     * AcronymRequest, which extends the Stub class that implements
-     * AcronymRequest, thereby allowing Android to handle calls across
+     * WeatherRequest, which extends the Stub class that implements
+     * WeatherRequest, thereby allowing Android to handle calls across
      * process boundaries.  This method runs in a separate Thread as
      * part of the Android Binder framework.
      * 
@@ -58,34 +59,34 @@ public class WeatherServiceAsync extends LifecycleLoggingService
     WeatherRequest.Stub mWeatherRequestImpl = new WeatherRequest.Stub() 
     {
             /**
-             * Implement the AIDL AcronymRequest expandAcronym()
+             * Implement the AIDL WeatherRequest expandWeather()
              * method, which forwards to DownloadUtils getResults() to
-             * obtain the results from the Acronym Web service and
+             * obtain the results from the Weather Web service and
              * then sends the results back to the Activity via a
              * callback.
              */
     	/*
             @Override
-            public void expandAcronym(String acronym,
-                                      AcronymResults callback)
+            public void expandWeather(String Weather,
+                                      WeatherResults callback)
                 throws RemoteException {
 
-                // Call the Acronym Web service to get the list of
-                // possible expansions of the designated acronym.
-                List<AcronymData> acronymResults = 
-                    Utils.getResults(acronym);
+                // Call the Weather Web service to get the list of
+                // possible expansions of the designated Weather.
+                List<WeatherData> WeatherResults = 
+                    Utils.getResults(Weather);
 
-                // Invoke a one-way callback to send list of acronym
-                // expansions back to the AcronymActivity.
-                if (acronymResults != null) {
+                // Invoke a one-way callback to send list of Weather
+                // expansions back to the WeatherActivity.
+                if (WeatherResults != null) {
                     Log.d(TAG, "" 
-                          + acronymResults.size() 
-                          + " results for acronym: " 
-                          + acronym);
-                    callback.sendResults(acronymResults);
+                          + WeatherResults.size() 
+                          + " results for Weather: " 
+                          + Weather);
+                    callback.sendResults(WeatherResults);
                 } else
                     callback.sendError("No expansions for " 
-                                       + acronym
+                                       + Weather
                                        + " found");
             }
             */
@@ -95,6 +96,9 @@ public class WeatherServiceAsync extends LifecycleLoggingService
 					throws RemoteException
 			{
 				// TODO Auto-generated method stub
+				Log.d(TAG, "----- WeatherServiceAsync.getCurrentWeather() -----");
+				
+				results.sendResults(null);
 				
 			}
 	};

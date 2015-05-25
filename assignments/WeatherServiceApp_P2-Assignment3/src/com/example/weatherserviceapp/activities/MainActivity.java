@@ -18,13 +18,6 @@ public class MainActivity extends LifecycleLoggingActivity
 	
 	private WeatherFetchTask mWeatherFetchTask;
 
-	/**
-	 * Used to retain the AcronymOps state between runtime configuration
-	 * changes.
-	 */
-	// protected final OldRetainedFragmentManager mRetainedFragmentManager =
-	// new OldRetainedFragmentManager(this.getFragmentManager(),
-	// TAG);
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -117,17 +110,22 @@ public class MainActivity extends LifecycleLoggingActivity
 	}
 
 	/*
-	 * Initiate the synchronous acronym lookup when the user presses the
+	 * Initiate the synchronous weather lookup when the user presses the
 	 * "Look Up Sync" button.
 	 */
 	public void fetchWeatherAsync(View v)
 	{
-
+		mWeatherFetchTask.fetchWeatherAsync(v);
 	}
 
+	
+	/*
+	 * Initiate the synchronous weather lookup when the user presses the
+	 * "Look Up Async" button.
+	 */
 	public void fetchWeatherSync(View v)
 	{
-
+		mWeatherFetchTask.fetchWeatherSync(v);
 	}
 
 }

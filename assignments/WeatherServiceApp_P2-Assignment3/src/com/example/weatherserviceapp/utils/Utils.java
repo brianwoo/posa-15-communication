@@ -27,9 +27,9 @@ public class Utils {
     private final static String TAG = Utils.class.getCanonicalName();
 
     /** 
-     * URL to the Acronym web service.
+     * URL to the Weather web service.
      */
-    private final static String sAcronym_Web_Service_URL =
+    private final static String sWeather_Web_Service_URL =
         "http://www.nactem.ac.uk/software/acromine/dictionary.py?sf=";
 
     /**

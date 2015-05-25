@@ -22,6 +22,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <service
+            android:name=".services.WeatherServiceAsync"
+            android:process=":remote1" >
+        </service>
+
+	    <service
+	       android:name=".services.WeatherServiceSync"
+	       android:process=":remote2">
+	    </service>
+        
     </application>
 
 </manifest>
