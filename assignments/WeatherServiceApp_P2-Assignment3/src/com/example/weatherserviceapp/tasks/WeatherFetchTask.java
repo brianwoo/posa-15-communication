@@ -62,6 +62,9 @@ public class WeatherFetchTask implements RetainedTask
 	 */
 	private void initializeViewFields()
 	{
+		System.out.println("---- initializeViewFields -----");
+		
+		
 		// Store the EditText that holds the urls entered by the user
 		// (if any).
 		mEditText = new WeakReference<>((EditText) mActivityRef.get()
@@ -147,6 +150,7 @@ public class WeatherFetchTask implements RetainedTask
 
 		if (weatherRequest != null)
 		{
+			
 			// Get the weather location entered by the user.
 			final String location = mEditText.get().getText().toString();
 

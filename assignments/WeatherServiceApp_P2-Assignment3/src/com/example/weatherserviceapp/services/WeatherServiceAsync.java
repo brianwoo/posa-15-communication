@@ -102,7 +102,7 @@ public class WeatherServiceAsync extends LifecycleLoggingService
 			{
 				Log.d(TAG, "----- WeatherServiceAsync.getCurrentWeather() -----");
 				
-				List<WeatherData> dataList = Utils.getResults(weatherLocation);
+				List<WeatherData> dataList = Utils.getResults(getApplicationContext(), weatherLocation);
 				
 				if (dataList != null)
 				{

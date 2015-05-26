@@ -15,7 +15,10 @@ import com.example.weatherserviceapp.json.WeatherJSONParser;
 import vandy.mooc.aidl.WeatherData;
 import android.app.Activity;
 import android.content.Context;
+import android.net.Uri;
+import android.os.Environment;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
@@ -36,6 +39,8 @@ public class Utils
 	 * URL to the Weather web service.
 	 */
 	private final static String sWeather_Web_Service_URL = "http://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+	
+	private final static String sWeather_Image_Icon_URL = "http://openweathermap.org/img/w/";
 
 	/**
 	 * Obtain the Weather information.
@@ -43,7 +48,7 @@ public class Utils
 	 * @return The information that responds to your current weather search.
 	 */
 
-	public static List<WeatherData> getResults(final String location)
+	public static List<WeatherData> getResults(Context context, final String location)
 	{
 		// Create a List that will return the WeatherData obtained
 		// from the Weather Service web service.
@@ -88,21 +93,53 @@ public class Utils
 		if (jsonWeathers != null && jsonWeathers.size() > 0) 
 		{ 
 			// Convert the JsonWeather data objects to our WeatherData object, 
-			// which can be passed between processes. 
-			
-			System.out.println("creating return list");
-			
+			// which can be passed between processes.			
 			for (JsonWeather jsonWeather : jsonWeathers) 
 			{				
-				returnList.add(new	WeatherData(
-					jsonWeather.getName() + ", " + jsonWeather.getSys().getCountry(),
-					jsonWeather.getWind().getSpeed(),
-					jsonWeather.getWind().getDeg(),
-					jsonWeather.getMain().getTemp(),
-					jsonWeather.getMain().getHumidity(),
-					jsonWeather.getSys().getSunrise(),
-					jsonWeather.getSys().getSunset()
-					));
+			
+				if (jsonWeather.getWeather().size() == 0)
+				{
+					Log.d(TAG, "Location " + location + " not found!");
+					break;
+				}
+				
+				// extra credit: downloading the icon for the app.
+				// reused image download utils from assignment #1.
+		        String directoryPathname = 
+		        		Environment.getExternalStoragePublicDirectory(
+		        				Environment.DIRECTORY_DCIM) + "/";
+				
+		        
+		        String imageToDownload = sWeather_Image_Icon_URL + jsonWeather.getWeather().get(0).getIcon() + ".png";
+		        
+		        Log.d(TAG, "---- Downloading Image: " + imageToDownload);
+		        
+		        Uri uri = Uri.parse(imageToDownload);
+		        
+				Uri downloadedImageUri = vandy.mooc.image.Utils.downloadImage(
+						context, 
+						uri, 
+						directoryPathname);
+				
+				String downloadImageUriString = null;
+				if (downloadedImageUri != null)
+					downloadImageUriString = downloadedImageUri.toString();
+				else
+					Log.d(TAG, "---- Image download failed: " + imageToDownload);
+				
+				returnList.add(new WeatherData(
+						jsonWeather.getName() + ", " + jsonWeather.getSys().getCountry(),
+						jsonWeather.getWind().getSpeed(),
+						jsonWeather.getWind().getDeg(),
+						jsonWeather.getMain().getTemp(),
+						jsonWeather.getMain().getHumidity(),
+						jsonWeather.getSys().getSunrise(),
+						jsonWeather.getSys().getSunset(),
+						jsonWeather.getWeather().get(0).getIcon(),
+						jsonWeather.getWeather().get(0).getMain(),
+						jsonWeather.getWeather().get(0).getDescription(),
+						downloadImageUriString
+						));
 				
 			}
 			// Return the List of WeatherData. 

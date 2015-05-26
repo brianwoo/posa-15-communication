@@ -49,6 +49,23 @@ public class RetainedFragmentManager extends Fragment
 
 	}
 
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState)
+	{
+		super.onActivityCreated(savedInstanceState);
+
+		// **** NOTE: I have to do reattachMainActivityToTask here because 
+		// it seems that the UI elements inside the Activity
+		// are not created if I initialize them from onAttach(). ****
+		
+		// assuming there are more than one tasks in the map, we need
+		// to reattach the weak ref of the MainActivity to all of them.
+		reattachMainActivityToTask();
+	}
+
+
+
 	/**
 	 * Hold a reference to the parent Activity so we can report the task's
 	 * current progress and results. The Android framework will pass us a
@@ -62,9 +79,7 @@ public class RetainedFragmentManager extends Fragment
 		Log.d(TAG, "----- RetainedFragmentManager.onAttach(). Activity="
 				+ activity.toString() + " -----");
 		
-		// assuming there are more than one tasks in the map, we need
-		// to reattach the weak ref of the MainActivity to all of them.
-		reattachMainActivityToTask();
+
 
 	}
 

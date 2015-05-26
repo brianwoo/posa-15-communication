@@ -41,6 +41,10 @@ public class WeatherData implements Parcelable {
     private long mHumidity;
     private long mSunrise;
     private long mSunset;
+    private String mImageDownloadedLocation;
+    private String mIconCode;
+    private String mWeatherMainDesc;
+    private String mWeatherDesc;
 
     /**
      * Constructor
@@ -59,7 +63,11 @@ public class WeatherData implements Parcelable {
                        double temp,
                        long humidity,
                        long sunrise,
-                       long sunset) {
+                       long sunset,
+                       String iconCode,
+                       String weatherMainDesc,
+                       String weatherDesc,
+                       String imageDownloadedLocation) {
         mName = name;
         mSpeed = speed;
         mDeg = deg;
@@ -67,6 +75,10 @@ public class WeatherData implements Parcelable {
         mHumidity = humidity;
         mSunrise = sunrise;
         mSunset = sunset;
+        mIconCode = iconCode;
+        mWeatherMainDesc = weatherMainDesc;
+        mWeatherDesc = weatherDesc;
+        mImageDownloadedLocation = imageDownloadedLocation;
     }
 
     /**
@@ -80,7 +92,11 @@ public class WeatherData implements Parcelable {
             + ", temp=" + mTemp 
             + ", humidity=" + mHumidity 
             + ", sunrise=" + mSunrise 
-            + ", sunset=" + mSunset + "]";
+            + ", sunset=" + mSunset 
+            + ", weatherMainDesc=" + mWeatherMainDesc
+            + ", weatherDesc=" + mWeatherDesc
+            + ", imageDownloadedLocation=" + mImageDownloadedLocation
+            + ", iconCode=" + mIconCode + "]";
     }
 
     /*
@@ -108,6 +124,10 @@ public class WeatherData implements Parcelable {
         dest.writeLong(mHumidity);
         dest.writeLong(mSunrise);
         dest.writeLong(mSunset);
+        dest.writeString(mImageDownloadedLocation);
+        dest.writeString(mWeatherMainDesc);
+        dest.writeString(mWeatherDesc);
+        dest.writeString(mIconCode);
     }
 
     /**
@@ -127,9 +147,14 @@ public class WeatherData implements Parcelable {
         mHumidity = in.readLong();
         mSunrise = in.readLong();
         mSunset = in.readLong();
+        mImageDownloadedLocation = in.readString();
+        mWeatherMainDesc = in.readString();
+        mWeatherDesc = in.readString();
+        mIconCode = in.readString();
     }
 
-    /**
+
+	/**
      * public Parcelable.Creator for WeatherData, which is an
      * interface that must be implemented and provided as a public
      * CREATOR field that generates instances of your Parcelable class
@@ -145,4 +170,11 @@ public class WeatherData implements Parcelable {
                 return new WeatherData[size];
             }
         };
+        
+
+	public String getmImageDownloadedLocation()
+	{
+		return mImageDownloadedLocation;
+	}
+      
 }
