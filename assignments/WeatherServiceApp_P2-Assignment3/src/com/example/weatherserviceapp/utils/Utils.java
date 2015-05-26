@@ -61,8 +61,8 @@ public class Utils {
             try (InputStream in =
                  new BufferedInputStream(urlConnection.getInputStream())) {
                  // Create the parser.
-                 final AcronymJSONParser parser =
-                     new AcronymJSONParser();
+                 final WeatherJSONParser parser =
+                     new WeatherJSONParser();
 
                 // Parse the Json results and create JsonAcronym data
                 // objects.
