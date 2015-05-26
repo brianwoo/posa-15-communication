@@ -10,6 +10,8 @@ public class JsonWeather {
 
 	protected static final String WEATHER_JSON = "weather"; 
 	protected static final String MAIN_JSON = "main";
+	protected static final String WIND_JSON = "wind";
+	protected static final String SYS_JSON = "sys";
 	
 	protected static final String TEMP_JSON = "temp";
 	protected static final String TEMPMIN_JSON = "temp_min";
@@ -19,6 +21,16 @@ public class JsonWeather {
 	protected static final String WEATHER_MAIN_JSON = "main";
 	protected static final String WEATHER_DESC_JSON = "description";
 	protected static final String WEATHER_ICON_JSON = "icon";
+	
+	protected static final String WIND_SPEED_JSON = "speed";
+	protected static final String WIND_DEG_JSON = "deg";
+	
+	protected static final String SYS_SUNRISE_JSON = "sunrise";
+	protected static final String SYS_SUNSET_JSON = "sunset";
+	protected static final String SYS_COUNTRY_JSON = "country";
+	
+	protected static final String NAME_JSON = "name";
+	
 	
     private Coord coord;
     private Sys sys;

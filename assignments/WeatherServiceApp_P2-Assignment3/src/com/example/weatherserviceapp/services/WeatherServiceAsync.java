@@ -5,6 +5,11 @@ package com.example.weatherserviceapp.services;
 
 
 
+import java.util.List;
+
+import com.example.weatherserviceapp.utils.Utils;
+
+import vandy.mooc.aidl.WeatherData;
 import vandy.mooc.aidl.WeatherRequest;
 import vandy.mooc.aidl.WeatherResults;
 import android.content.Context;
@@ -92,13 +97,22 @@ public class WeatherServiceAsync extends LifecycleLoggingService
             */
 
 			@Override
-			public void getCurrentWeather(String Weather, WeatherResults results)
+			public void getCurrentWeather(String weatherLocation, WeatherResults results)
 					throws RemoteException
 			{
-				// TODO Auto-generated method stub
 				Log.d(TAG, "----- WeatherServiceAsync.getCurrentWeather() -----");
 				
-				results.sendResults(null);
+				List<WeatherData> dataList = Utils.getResults(weatherLocation);
+				
+				if (dataList != null)
+				{
+					for (WeatherData data : dataList)
+					{
+						System.out.println("Weather Data = " + data.toString());
+					}
+				}
+				
+				results.sendResults(dataList);
 				
 			}
 	};
