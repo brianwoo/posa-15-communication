@@ -47,7 +47,8 @@ public class WeatherData implements Parcelable {
     private String mIconCode;
     private String mWeatherMainDesc;
     private String mWeatherDesc;
-    private String mLastUpdated;
+    private String mSearchedLocation;
+    private long mLastUpdated;
 
     /**
      * Constructor
@@ -71,7 +72,8 @@ public class WeatherData implements Parcelable {
                        String weatherMainDesc,
                        String weatherDesc,
                        String imageDownloadedLocation,
-                       String lastUpdated) {
+                       String searchedLocation,
+                       long lastUpdated) {
         mName = name;
         mSpeed = speed;
         mDeg = deg;
@@ -83,6 +85,7 @@ public class WeatherData implements Parcelable {
         mWeatherMainDesc = weatherMainDesc;
         mWeatherDesc = weatherDesc;
         mImageDownloadedLocation = imageDownloadedLocation;
+        mSearchedLocation = searchedLocation;
         mLastUpdated = lastUpdated;
     }
 
@@ -101,6 +104,7 @@ public class WeatherData implements Parcelable {
             + ", weatherMainDesc=" + mWeatherMainDesc
             + ", weatherDesc=" + mWeatherDesc
             + ", imageDownloadedLocation=" + mImageDownloadedLocation
+            + ", searchedLocation=" + mSearchedLocation
             + ", lastUpdated=" + mLastUpdated
             + ", iconCode=" + mIconCode + "]";
     }
@@ -133,7 +137,8 @@ public class WeatherData implements Parcelable {
         dest.writeString(mImageDownloadedLocation);
         dest.writeString(mWeatherMainDesc);
         dest.writeString(mWeatherDesc);
-        dest.writeString(mLastUpdated);
+        dest.writeString(mSearchedLocation);
+        dest.writeLong(mLastUpdated);
         dest.writeString(mIconCode);
     }
 
@@ -157,7 +162,8 @@ public class WeatherData implements Parcelable {
         mImageDownloadedLocation = in.readString();
         mWeatherMainDesc = in.readString();
         mWeatherDesc = in.readString();
-        mLastUpdated = in.readString();
+        mSearchedLocation = in.readString();
+        mLastUpdated = in.readLong();
         mIconCode = in.readString();
     }
 
@@ -230,10 +236,15 @@ public class WeatherData implements Parcelable {
 		return mWeatherDesc;
 	}
 
-	public String getmLastUpdated()
+	public long getmLastUpdated()
 	{
 		return mLastUpdated;
 	}
+
+	public String getmSearchedLocation()
+	{
+		return mSearchedLocation;
+	}
 	
-	      
+	
 }

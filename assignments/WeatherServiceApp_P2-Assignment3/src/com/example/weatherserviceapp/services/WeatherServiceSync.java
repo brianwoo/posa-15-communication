@@ -6,12 +6,15 @@ package com.example.weatherserviceapp.services;
 
 import java.util.List;
 
+import com.example.weatherserviceapp.utils.Utils;
+
 import vandy.mooc.aidl.WeatherCall;
 import vandy.mooc.aidl.WeatherData;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.util.Log;
 
 
 /**
@@ -62,41 +65,24 @@ public class WeatherServiceSync extends LifecycleLoggingService
              * the results from the Weather Web service and then
              * returns the results back to the Activity.
              */
-    	/*
-            @Override
-            public List<WeatherData> expandWeather(String Weather)
-                throws RemoteException {
-
-                // Call the Weather Web service to get the list of
-                // possible expansions of the designated Weather.
-                List<WeatherData> WeatherResults = 
-                    Utils.getResults(Weather);
-
-                if (WeatherResults != null) {
-                    Log.d(TAG, "" 
-                          + WeatherResults.size() 
-                          + " results for Weather: " 
-                          + Weather);
-
-                    // Return the list of Weather expansions back to the
-                    // WeatherActivity.
-                    return WeatherResults;
-                } else {
-                    // Create a zero-sized WeatherResults object to
-                    // indicate to the caller that the Weather had no
-                    // expansions.
-                    WeatherResults = new ArrayList<WeatherData>();
-                    return WeatherResults;
-                }
-            }
-            */
 
 			@Override
-			public List<WeatherData> getCurrentWeather(String Weather)
+			public List<WeatherData> getCurrentWeather(String weather)
 					throws RemoteException
 			{
-				System.out.println("----- getCurrentWeather Sync version-----");
-				return null;
+				Log.d(TAG, "----- WeatherServiceSYNC.getCurrentWeather() -----");
+				
+				List<WeatherData> dataList = Utils.getResults(getApplicationContext(), weather);
+				
+				if (dataList != null)
+				{
+					for (WeatherData data : dataList)
+					{
+						System.out.println("Weather Data = " + data.toString());
+					}
+				}
+				
+				return dataList;
 			}
 	};
     

@@ -123,7 +123,7 @@ public class Utils
 
 				Uri uri = Uri.parse(imageToDownload);
 
-				Uri downloadedImageUri = vandy.mooc.image.Utils.downloadImage(
+				Uri downloadedImageUri = vandy.mooc.image.ImageUtils.downloadImage(
 						context, uri, directoryPathname);
 
 				String downloadImageUriString = null;
@@ -151,7 +151,7 @@ public class Utils
 								.getWeather().get(0).getIcon(), jsonWeather
 								.getWeather().get(0).getMain(), jsonWeather
 								.getWeather().get(0).getDescription(), 
-						downloadImageUriString, getCurrentDateTime()));
+						downloadImageUriString, location, System.currentTimeMillis()));
 
 			}
 			// Return the List of WeatherData.
@@ -162,10 +162,10 @@ public class Utils
 	}
 	
 	
-	private static String getCurrentDateTime()
+	public static String getDateTimeFromMs(long milliseconds)
 	{
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		Date date = new Date();
+		DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+		Date date = new Date(milliseconds);
 		return dateFormat.format(date);		
 	}
 	
@@ -200,12 +200,10 @@ public class Utils
 	
 	public static String convertLongToTime(long input)
 	{
-		//long unixSeconds = 1372339860;
 		Date date = new Date(input*1000L); // *1000 is to convert seconds to milliseconds
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm z"); // the format of your date
 		sdf.setTimeZone(TimeZone.getDefault()); // give a timezone reference for formating (see comment at the bottom
 		String formattedDate = sdf.format(date);
-		System.out.println(formattedDate);
 		
 		return formattedDate;
 	}

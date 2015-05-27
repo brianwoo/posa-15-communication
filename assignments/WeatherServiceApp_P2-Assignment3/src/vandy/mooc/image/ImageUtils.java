@@ -35,12 +35,12 @@ import android.widget.Toast;
  * This helper class encapsulates several static methods that are used to
  * download image files.
  */
-public class Utils
+public class ImageUtils
 {
 	/**
 	 * Used for debugging.
 	 */
-	private final static String TAG = "Utils";
+	private final static String TAG = "ImageUtils";
 
 	/**
 	 * If you have access to a stable Internet connection for testing purposes,
@@ -167,7 +167,7 @@ public class Utils
 			// Create a URI from the file.
 			Uri uri = Uri.fromFile(filePath);
 
-			return Utils.createDirectoryAndSaveFile(context,
+			return ImageUtils.createDirectoryAndSaveFile(context,
 					new URL(uri.toString()), uri.getLastPathSegment(),
 					directoryPathname.toString());
 		}
@@ -205,7 +205,7 @@ public class Utils
 
 			// Create an output file and save the image referenced
 			// at the URL into it.
-			return Utils.createDirectoryAndSaveFile(context,
+			return ImageUtils.createDirectoryAndSaveFile(context,
 					new URL(url.toString()), url.getLastPathSegment(),
 					directoryPathname);
 
@@ -439,7 +439,7 @@ public class Utils
 	/**
 	 * Ensure this class is only used as a utility.
 	 */
-	private Utils()
+	private ImageUtils()
 	{
 		throw new AssertionError();
 	}

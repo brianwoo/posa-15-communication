@@ -5,7 +5,10 @@ package com.example.weatherserviceapp.tasks;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.example.weatherserviceapp.R;
 import com.example.weatherserviceapp.activities.MainActivity;
@@ -33,6 +36,8 @@ import android.widget.EditText;
 public class WeatherFetchTask implements RetainedTask
 {
 
+	private static final int TEN_SECONDS = 10*1000;
+
 	private static final String TAG = WeatherFetchTask.class.getSimpleName();
 
 	private WeakReference<Activity> mActivityRef;
@@ -50,8 +55,14 @@ public class WeatherFetchTask implements RetainedTask
 	private GenericServiceConnection<WeatherRequest> mServiceConnectionAsync;
 
 	private WeakReference<EditText> mEditText;
-
-	private WeatherData mCachedWeatherData;
+	
+	private WeatherData mlastSearchedWeatherData;
+	
+	private Map<String, CachedWeatherData> weatherDataCacheMap = 
+			new HashMap<String, CachedWeatherData>();
+	
+	
+	//private 
 	
 	/**
 	 * Constructor
@@ -72,9 +83,9 @@ public class WeatherFetchTask implements RetainedTask
 		mEditText = new WeakReference<>((EditText) mActivityRef.get()
 				.findViewById(R.id.editText1));
 		
-		if (mCachedWeatherData != null)
+		if (mlastSearchedWeatherData != null)
 		{
-			displayWeatherData(mCachedWeatherData);
+			displayWeatherData(mlastSearchedWeatherData);
 		}
 
 	}
@@ -122,13 +133,29 @@ public class WeatherFetchTask implements RetainedTask
 	 */
 	public void unbindService()
 	{
-		// Unbind the Async Service if it is connected.
-		if (mServiceConnectionAsync.getInterface() != null)
-			mActivityRef.get().unbindService(mServiceConnectionAsync);
+		try
+		{
+			// Unbind the Async Service if it is connected.
+			if (mServiceConnectionAsync.getInterface() != null)
+				mActivityRef.get().unbindService(mServiceConnectionAsync);
+		}
+		catch (RuntimeException e)
+		{
+			// this might happen when the service is not already bound.
+			e.printStackTrace();
+		}
 
-		// Unbind the Sync Service if it is connected.
-		if (mServiceConnectionSync.getInterface() != null)
-			mActivityRef.get().unbindService(mServiceConnectionSync);
+		try
+		{
+			// Unbind the Sync Service if it is connected.
+			if (mServiceConnectionSync.getInterface() != null)
+				mActivityRef.get().unbindService(mServiceConnectionSync);
+		}
+		catch (RuntimeException e)
+		{
+			// this might happen when the service is not already bound.
+			e.printStackTrace();
+		}
 	}
 
 	/*
@@ -147,6 +174,88 @@ public class WeatherFetchTask implements RetainedTask
 		initializeNonViewFields();
 	}
 
+	/**
+	 * Handle Retrieved Weather Data from Sync / Async Service
+	 * 
+	 * @param results
+	 */
+	private void handleRetreivedWeatherData(List<WeatherData> results)
+	{
+		if ((null == results) || results.size() == 0 || null == results.get(0))
+		{
+			displayInformation("No Result Found");
+			return;
+		}
+		
+		WeatherData weatherData = results.get(0);
+		
+		cacheWeatherData(weatherData);
+		
+		displayWeatherData(weatherData);
+	}
+
+
+	private void displayInformation(String info)
+	{
+		if ((null == mActivityRef) || (null == mActivityRef.get()))
+			return;
+		
+		MainActivity mainActivity = (MainActivity) mActivityRef.get();
+		mainActivity.showToast(info);
+	}
+
+
+	private void displayWeatherData(WeatherData weatherData)
+	{
+		if ((null == mActivityRef) || (null == mActivityRef.get()))
+			return;
+		
+		MainActivity mainActivity = (MainActivity) mActivityRef.get();
+		mainActivity.displayWeatherData(weatherData);
+		
+	}
+
+
+	/**
+	 * cache weather data
+	 * 
+	 * @param weatherData
+	 */
+	private void cacheWeatherData(WeatherData weatherData)
+	{
+		String lastSearchedLocation = weatherData.getmSearchedLocation();
+		long lastUpdatedTime = weatherData.getmLastUpdated();
+		
+		CachedWeatherData cachedWeatherData = 
+				new CachedWeatherData(lastSearchedLocation, 
+						lastUpdatedTime, weatherData);
+		
+		weatherDataCacheMap.put(lastSearchedLocation, cachedWeatherData);
+		
+		// setup a reference to the last searched data in the map for 
+		// screen refresh
+		mlastSearchedWeatherData = weatherData;
+	}
+
+
+	private boolean isCachedDataStillFreshForLocation(String location)
+	{
+		CachedWeatherData cachedWeatherData = weatherDataCacheMap.get(location);
+		
+		// no data currently cached for this location
+		if (null == cachedWeatherData)
+			return false;
+		
+		long currentTime = System.currentTimeMillis();
+		long lastUpdatedTime = cachedWeatherData.getLastUpdatedTime();
+		
+		if ((currentTime - lastUpdatedTime) > TEN_SECONDS)
+			return false;
+			
+		return true;
+	}
+
+
 	/*
 	 * Initiate the asynchronous weather lookup when the user presses the
 	 * "Look Up Async" button.
@@ -159,11 +268,27 @@ public class WeatherFetchTask implements RetainedTask
 		{
 			
 			// Get the weather location entered by the user.
-			final String location = mEditText.get().getText().toString();
+			String location = mEditText.get().getText().toString();
 
 			Utils.hideKeyboard(mActivityRef.get(), mEditText.get()
 					.getWindowToken());
-
+			
+			if (location.length() == 0)
+			{
+				displayInformation("Please enter a location");
+				return;
+			}
+			
+			// check to see if the cached data is still fresh, if so
+			// just pull the data from cache.
+			if (isCachedDataStillFreshForLocation(location))
+			{
+				CachedWeatherData cachedData = weatherDataCacheMap.get(location);
+				displayWeatherData(cachedData.getCachedWeatherData());
+				return;
+			}
+			
+			// otherwise, we fetch from remote server
 			try
 			{
 				// Invoke a one-way AIDL call, which does not block
@@ -195,75 +320,16 @@ public class WeatherFetchTask implements RetainedTask
 	 */
 	private WeatherResults.Stub mWeatherResults = new WeatherResults.Stub()
 	{
-		/**
-		 * This method is invoked by the WeatherServiceAsync to return the
-		 * results back to the WeatherActivity.
-		 */
-		/*
-		 * @Override public void sendResults(final List<WeatherData>
-		 * weatherDataList) throws RemoteException { // Since the Android Binder
-		 * framework dispatches this // method in a background Thread we need to
-		 * explicitly // post a runnable containing the results to the UI //
-		 * Thread, where it's displayed. mActivity.get().runOnUiThread(new
-		 * Runnable() { public void run() { displayResults(weatherDataList); }
-		 * }); }
-		 */
-
-		/**
-		 * This method is invoked by the WeatherServiceAsync to return error
-		 * results back to the WeatherActivity.
-		 */
-		/*
-		 * @Override public void sendError(final String reason) throws
-		 * RemoteException { // Since the Android Binder framework dispatches
-		 * this // method in a background Thread we need to explicitly // post a
-		 * runnable containing the results to the UI // Thread, where it's
-		 * displayed. mActivity.get().runOnUiThread(new Runnable() { public void
-		 * run() { Utils.showToast(mActivity.get(), reason); } }); }
-		 */
-
 		@Override
 		public void sendResults(List<WeatherData> results)
 				throws RemoteException
 		{
 			System.out.println("===== Received Results from Async =====");
 			
-			if ((null == results) || null == results.get(0))
-			{
-				displayNoResultsFound();
-				return;
-			}
-			
-			mCachedWeatherData = results.get(0);
-			displayWeatherData(mCachedWeatherData);
-
-		}
-
-		
-		
-
-
-		private void displayNoResultsFound()
-		{
-			// TODO Auto-generated method stub
-			
+			handleRetreivedWeatherData(results);
 		}
 	};
 
-	
-	
-	private void displayWeatherData(WeatherData weatherData)
-	{
-		if ((null == mActivityRef) || (null == mActivityRef.get()))
-			return;
-		
-		MainActivity mainActivity = (MainActivity) mActivityRef.get();
-		mainActivity.displayWeatherData(weatherData);
-		
-	}
-	
-	
-	
 	
 	public void fetchWeatherSync(View v)
 	{
@@ -276,6 +342,22 @@ public class WeatherFetchTask implements RetainedTask
 
 			Utils.hideKeyboard(mActivityRef.get(), mEditText.get()
 					.getWindowToken());
+			
+			if (location.length() == 0)
+			{
+				displayInformation("Please enter a location");
+				return;
+			}
+			
+			// check to see if the cached data is still fresh, if so
+			// just pull the data from cache.
+			if (isCachedDataStillFreshForLocation(location))
+			{
+				CachedWeatherData cachedData = weatherDataCacheMap.get(location);
+				displayWeatherData(cachedData.getCachedWeatherData());
+				return;
+			}
+			
 
 			// Use AsyncTask for the two-way sync call because
 			// this is going to block the UI Thread.
@@ -306,9 +388,11 @@ public class WeatherFetchTask implements RetainedTask
 				 * 
 				 */
 				@Override
-				protected void onPostExecute(List<WeatherData> result)
+				protected void onPostExecute(List<WeatherData> results)
 				{
 					System.out.println("===== RECEIVED RESULTS from Sync =====");
+					
+					handleRetreivedWeatherData(results);
 				}
 			};
 
@@ -320,6 +404,62 @@ public class WeatherFetchTask implements RetainedTask
 		{
 			Log.d(TAG, "weatherRequest was null.");
 		}
+	}
+	
+	
+	/**
+	 * This class is used to store the weather data, location and 
+	 * the last updated time for caching purpose.
+	 * 
+	 * @author bwoo
+	 *
+	 */
+	class CachedWeatherData
+	{
+		private String location;
+		private long lastUpdatedTime;
+		private WeatherData cachedWeatherData;
+		
+		
+		/**
+		 * Constructor
+		 * 
+		 * @param location
+		 * @param lastUpdatedTime
+		 * @param weatherData
+		 */
+		public CachedWeatherData(String location, long lastUpdatedTime, WeatherData weatherData)
+		{
+			this.location = location;
+			this.lastUpdatedTime = lastUpdatedTime;
+			this.cachedWeatherData = weatherData;
+		}
+		
+		
+		public long getLastUpdatedTime()
+		{
+			return lastUpdatedTime;
+		}
+		public void setLastUpdatedTime(long lastUpdatedTime)
+		{
+			this.lastUpdatedTime = lastUpdatedTime;
+		}
+		public WeatherData getCachedWeatherData()
+		{
+			return cachedWeatherData;
+		}
+		public void setCachedWeatherData(WeatherData cachedWeatherData)
+		{
+			this.cachedWeatherData = cachedWeatherData;
+		}
+		public String getLocation()
+		{
+			return location;
+		}
+		public void setLocation(String location)
+		{
+			this.location = location;
+		}	
 	}
 
 }
