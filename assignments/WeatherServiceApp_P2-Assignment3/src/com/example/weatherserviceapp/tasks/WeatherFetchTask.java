@@ -51,6 +51,8 @@ public class WeatherFetchTask implements RetainedTask
 
 	private WeakReference<EditText> mEditText;
 
+	private WeatherData mCachedWeatherData;
+	
 	/**
 	 * Constructor
 	 */
@@ -69,6 +71,11 @@ public class WeatherFetchTask implements RetainedTask
 		// (if any).
 		mEditText = new WeakReference<>((EditText) mActivityRef.get()
 				.findViewById(R.id.editText1));
+		
+		if (mCachedWeatherData != null)
+		{
+			displayWeatherData(mCachedWeatherData);
+		}
 
 	}
 
@@ -219,11 +226,43 @@ public class WeatherFetchTask implements RetainedTask
 		public void sendResults(List<WeatherData> results)
 				throws RemoteException
 		{
-			System.out.println("===== SEND RESULTS from Async =====");
+			System.out.println("===== Received Results from Async =====");
+			
+			if ((null == results) || null == results.get(0))
+			{
+				displayNoResultsFound();
+				return;
+			}
+			
+			mCachedWeatherData = results.get(0);
+			displayWeatherData(mCachedWeatherData);
 
+		}
+
+		
+		
+
+
+		private void displayNoResultsFound()
+		{
+			// TODO Auto-generated method stub
+			
 		}
 	};
 
+	
+	
+	private void displayWeatherData(WeatherData weatherData)
+	{
+		if ((null == mActivityRef) || (null == mActivityRef.get()))
+			return;
+		
+		MainActivity mainActivity = (MainActivity) mActivityRef.get();
+		mainActivity.displayWeatherData(weatherData);
+		
+	}
+	
+	
 	
 	
 	public void fetchWeatherSync(View v)

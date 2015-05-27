@@ -269,7 +269,8 @@ public class Utils
 				directoryPath.mkdirs();
 
 			// Create a filePath within the directoryPath.
-			File filePath = new File(directoryPath, getUniqueFilename(fileName));
+			//File filePath = new File(directoryPath, getUniqueFilename(fileName));
+			File filePath = new File(directoryPath, "weatherIcon");
 
 			// Delete the file if it already exists.
 			if (filePath.exists())

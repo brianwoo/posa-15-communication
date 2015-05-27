@@ -1,15 +1,24 @@
 package com.example.weatherserviceapp.activities;
 
+import vandy.mooc.aidl.WeatherData;
+
 import com.example.weatherserviceapp.R;
 import com.example.weatherserviceapp.tasks.DummyTask;
 import com.example.weatherserviceapp.tasks.WeatherFetchTask;
 import com.example.weatherserviceapp.utils.RetainedFragmentManager;
+import com.example.weatherserviceapp.utils.Utils;
 
 import android.app.FragmentManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class MainActivity extends LifecycleLoggingActivity
 {
@@ -18,6 +27,15 @@ public class MainActivity extends LifecycleLoggingActivity
 	
 	private WeatherFetchTask mWeatherFetchTask;
 
+	private TextView mTextViewCity;
+	private TextView mTextViewDesc;
+	private TextView mTextViewTemp;
+	private TextView mTextViewWind;
+	private TextView mTextViewHumidity;
+	private TextView mTextViewSunrise;
+	private TextView mTextViewSunset;
+	private ImageView mImageViewWeatherIcon;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -25,6 +43,15 @@ public class MainActivity extends LifecycleLoggingActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		mTextViewCity = (TextView) findViewById(R.id.textViewCity);
+		mTextViewDesc = (TextView) findViewById(R.id.textViewDesc);
+		mTextViewTemp = (TextView) findViewById(R.id.textViewTemp);
+		mTextViewWind = (TextView) findViewById(R.id.textViewWind);
+		mTextViewHumidity = (TextView) findViewById(R.id.textViewHumidity);
+		mTextViewSunrise = (TextView) findViewById(R.id.textViewSunrise);
+		mTextViewSunset = (TextView) findViewById(R.id.textViewSunset);
+		mImageViewWeatherIcon = (ImageView) findViewById(R.id.imageViewWeatherIcon);
+		
 		handleConfigurationChanges();
 	}
 
@@ -128,5 +155,54 @@ public class MainActivity extends LifecycleLoggingActivity
 	{
 		mWeatherFetchTask.fetchWeatherSync(v);
 	}
+	
+	
+	
+	public void displayWeatherData(final WeatherData weatherData)
+	{
+		runOnUiThread(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				mTextViewCity.setText(weatherData.getmName());
+				mTextViewDesc.setText(weatherData.getmWeatherDesc());
+				
+				String humidityString = "Humidity " + Long.toString(weatherData.getmHumidity()) + "%";
+				mTextViewHumidity.setText(humidityString);
+				
+				String sunriseString = "Sunrise " + Utils.convertLongToTime(weatherData.getmSunrise());
+				mTextViewSunrise.setText(sunriseString);
+				
+				String sunsetString = "Sunset " + Utils.convertLongToTime(weatherData.getmSunset());
+				mTextViewSunset.setText(sunsetString);
+				
+				String tempString = (int) weatherData.getmTemp() + " C";
+				mTextViewTemp.setText(tempString);
+				
+				String windString = "Wind " + (int) weatherData.getmSpeed() + " km/h";
+				mTextViewWind.setText(windString);
+				
+				String imageLocation = weatherData.getmImageDownloadedLocation();
+				Uri imageUri = Uri.parse(imageLocation);
+				mImageViewWeatherIcon.setImageURI(imageUri);
+			}
+		});
+	}
+	
+
+	private void getBitmap()
+	{
+		Matrix Mat = new Matrix();
+
+		Bitmap Source = BitmapFactory.decodeFile("ItemImagePath");
+
+		Bitmap Destination = Bitmap.createScaledBitmap( Source, 320, 320, true );
+
+		Source = Bitmap.createBitmap( Destination, 0, 0, Destination.getWidth(), Destination.getHeight(),Mat, true );
+
+		//ItemImageView.setImageBitmap(Source);
+	}
+	
 
 }

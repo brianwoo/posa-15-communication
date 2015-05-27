@@ -1,5 +1,7 @@
 package vandy.mooc.aidl;
 
+import java.security.acl.LastOwnerException;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -45,6 +47,7 @@ public class WeatherData implements Parcelable {
     private String mIconCode;
     private String mWeatherMainDesc;
     private String mWeatherDesc;
+    private String mLastUpdated;
 
     /**
      * Constructor
@@ -67,7 +70,8 @@ public class WeatherData implements Parcelable {
                        String iconCode,
                        String weatherMainDesc,
                        String weatherDesc,
-                       String imageDownloadedLocation) {
+                       String imageDownloadedLocation,
+                       String lastUpdated) {
         mName = name;
         mSpeed = speed;
         mDeg = deg;
@@ -79,6 +83,7 @@ public class WeatherData implements Parcelable {
         mWeatherMainDesc = weatherMainDesc;
         mWeatherDesc = weatherDesc;
         mImageDownloadedLocation = imageDownloadedLocation;
+        mLastUpdated = lastUpdated;
     }
 
     /**
@@ -96,6 +101,7 @@ public class WeatherData implements Parcelable {
             + ", weatherMainDesc=" + mWeatherMainDesc
             + ", weatherDesc=" + mWeatherDesc
             + ", imageDownloadedLocation=" + mImageDownloadedLocation
+            + ", lastUpdated=" + mLastUpdated
             + ", iconCode=" + mIconCode + "]";
     }
 
@@ -127,6 +133,7 @@ public class WeatherData implements Parcelable {
         dest.writeString(mImageDownloadedLocation);
         dest.writeString(mWeatherMainDesc);
         dest.writeString(mWeatherDesc);
+        dest.writeString(mLastUpdated);
         dest.writeString(mIconCode);
     }
 
@@ -150,6 +157,7 @@ public class WeatherData implements Parcelable {
         mImageDownloadedLocation = in.readString();
         mWeatherMainDesc = in.readString();
         mWeatherDesc = in.readString();
+        mLastUpdated = in.readString();
         mIconCode = in.readString();
     }
 
@@ -176,5 +184,56 @@ public class WeatherData implements Parcelable {
 	{
 		return mImageDownloadedLocation;
 	}
-      
+
+	public String getmName()
+	{
+		return mName;
+	}
+
+	public double getmSpeed()
+	{
+		return mSpeed;
+	}
+
+	public double getmDeg()
+	{
+		return mDeg;
+	}
+
+	public double getmTemp()
+	{
+		return mTemp;
+	}
+
+	public long getmHumidity()
+	{
+		return mHumidity;
+	}
+
+	public long getmSunrise()
+	{
+		return mSunrise;
+	}
+
+	public long getmSunset()
+	{
+		return mSunset;
+	}
+
+	public String getmWeatherMainDesc()
+	{
+		return mWeatherMainDesc;
+	}
+
+	public String getmWeatherDesc()
+	{
+		return mWeatherDesc;
+	}
+
+	public String getmLastUpdated()
+	{
+		return mLastUpdated;
+	}
+	
+	      
 }
