@@ -64,38 +64,12 @@ public class WeatherServiceAsync extends LifecycleLoggingService
     WeatherRequest.Stub mWeatherRequestImpl = new WeatherRequest.Stub() 
     {
             /**
-             * Implement the AIDL WeatherRequest expandWeather()
-             * method, which forwards to DownloadUtils getResults() to
+             * Implement the AIDL WeatherRequest getCurrentWeather()
+             * method, which forwards to Utils getResults() to
              * obtain the results from the Weather Web service and
              * then sends the results back to the Activity via a
              * callback.
              */
-    	/*
-            @Override
-            public void expandWeather(String Weather,
-                                      WeatherResults callback)
-                throws RemoteException {
-
-                // Call the Weather Web service to get the list of
-                // possible expansions of the designated Weather.
-                List<WeatherData> WeatherResults = 
-                    Utils.getResults(Weather);
-
-                // Invoke a one-way callback to send list of Weather
-                // expansions back to the WeatherActivity.
-                if (WeatherResults != null) {
-                    Log.d(TAG, "" 
-                          + WeatherResults.size() 
-                          + " results for Weather: " 
-                          + Weather);
-                    callback.sendResults(WeatherResults);
-                } else
-                    callback.sendError("No expansions for " 
-                                       + Weather
-                                       + " found");
-            }
-            */
-
 			@Override
 			public void getCurrentWeather(String weatherLocation, WeatherResults results)
 					throws RemoteException

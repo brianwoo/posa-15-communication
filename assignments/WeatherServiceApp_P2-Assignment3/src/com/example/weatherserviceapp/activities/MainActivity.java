@@ -3,15 +3,11 @@ package com.example.weatherserviceapp.activities;
 import vandy.mooc.aidl.WeatherData;
 
 import com.example.weatherserviceapp.R;
-import com.example.weatherserviceapp.tasks.DummyTask;
 import com.example.weatherserviceapp.tasks.WeatherFetchTask;
 import com.example.weatherserviceapp.utils.RetainedFragmentManager;
 import com.example.weatherserviceapp.utils.Utils;
 
 import android.app.FragmentManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
@@ -44,6 +40,7 @@ public class MainActivity extends LifecycleLoggingActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		// caching the UI components
 		mTextViewCity = (TextView) findViewById(R.id.textViewCity);
 		mTextViewDesc = (TextView) findViewById(R.id.textViewDesc);
 		mTextViewTemp = (TextView) findViewById(R.id.textViewTemp);
@@ -104,7 +101,7 @@ public class MainActivity extends LifecycleLoggingActivity
 			mTaskFragment = new RetainedFragmentManager();
 			
 			// add the tasks to the RetainedFragmentManager
-			//mTaskFragment.put("dummyTask", new DummyTask());
+			// mTaskFragment.put("dummyTask", new DummyTask());  // for testing only
 			
 			mWeatherFetchTask = new WeatherFetchTask();
 			mTaskFragment.put("WeatherFetchTask", mWeatherFetchTask);
@@ -125,6 +122,7 @@ public class MainActivity extends LifecycleLoggingActivity
 		return true;
 	}
 
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
@@ -141,7 +139,7 @@ public class MainActivity extends LifecycleLoggingActivity
 
 	/*
 	 * Initiate the synchronous weather lookup when the user presses the
-	 * "Look Up Sync" button.
+	 * "Async Lookup" button.
 	 */
 	public void fetchWeatherAsync(View v)
 	{
@@ -151,7 +149,7 @@ public class MainActivity extends LifecycleLoggingActivity
 	
 	/*
 	 * Initiate the synchronous weather lookup when the user presses the
-	 * "Look Up Async" button.
+	 * "Sync Lookup" button.
 	 */
 	public void fetchWeatherSync(View v)
 	{
@@ -160,7 +158,7 @@ public class MainActivity extends LifecycleLoggingActivity
 	
 	
 	/**
-	 * Show Toast on the screen to show any informational message
+	 * Show Toast on the screen to show any informational message on UI Thread
 	 * 
 	 * @param message
 	 */
@@ -180,7 +178,7 @@ public class MainActivity extends LifecycleLoggingActivity
 	
 	
 	/**
-	 * Display Weather Data
+	 * Display Weather Data on UI Thread
 	 * 
 	 * @param weatherData
 	 */
@@ -221,20 +219,6 @@ public class MainActivity extends LifecycleLoggingActivity
 				
 			}
 		});
-	}
-	
-
-	private void getBitmap()
-	{
-		Matrix Mat = new Matrix();
-
-		Bitmap Source = BitmapFactory.decodeFile("ItemImagePath");
-
-		Bitmap Destination = Bitmap.createScaledBitmap( Source, 320, 320, true );
-
-		Source = Bitmap.createBitmap( Destination, 0, 0, Destination.getWidth(), Destination.getHeight(),Mat, true );
-
-		//ItemImageView.setImageBitmap(Source);
 	}
 	
 

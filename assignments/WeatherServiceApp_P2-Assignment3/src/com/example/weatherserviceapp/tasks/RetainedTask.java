@@ -12,7 +12,9 @@ import android.app.Activity;
 
 /**
  * @author bwoo
- *
+ * 
+ * This is an interface for other classes to implement in order to be
+ * added to the RetainedFragmentManager for execution.
  */
 public interface RetainedTask
 {

@@ -32,6 +32,8 @@ import android.widget.EditText;
 /**
  * @author bwoo
  * 
+ * The WeatherFetchTask has the functionality to fetch weather data 
+ * both synchronously and asynchronously.
  */
 public class WeatherFetchTask implements RetainedTask
 {
@@ -60,10 +62,7 @@ public class WeatherFetchTask implements RetainedTask
 	
 	private Map<String, CachedWeatherData> weatherDataCacheMap = 
 			new HashMap<String, CachedWeatherData>();
-	
-	
-	//private 
-	
+		
 	/**
 	 * Constructor
 	 */
@@ -187,6 +186,7 @@ public class WeatherFetchTask implements RetainedTask
 			return;
 		}
 		
+		// retrieve the result and cache it.
 		WeatherData weatherData = results.get(0);
 		
 		cacheWeatherData(weatherData);
@@ -195,6 +195,11 @@ public class WeatherFetchTask implements RetainedTask
 	}
 
 
+	/**
+	 * Display the information through the Activity
+	 * 
+	 * @param info
+	 */
 	private void displayInformation(String info)
 	{
 		if ((null == mActivityRef) || (null == mActivityRef.get()))
@@ -205,6 +210,11 @@ public class WeatherFetchTask implements RetainedTask
 	}
 
 
+	/**
+	 * Display the weather Data through the Activity
+	 * 
+	 * @param weatherData
+	 */
 	private void displayWeatherData(WeatherData weatherData)
 	{
 		if ((null == mActivityRef) || (null == mActivityRef.get()))
@@ -217,7 +227,7 @@ public class WeatherFetchTask implements RetainedTask
 
 
 	/**
-	 * cache weather data
+	 * Cache weather data
 	 * 
 	 * @param weatherData
 	 */
@@ -238,6 +248,14 @@ public class WeatherFetchTask implements RetainedTask
 	}
 
 
+	
+	/**
+	 * This method is to check to see if we need to fetch fresh
+	 * data or use the cached data from the previous fetch. 
+	 * 
+	 * @param location
+	 * @return
+	 */
 	private boolean isCachedDataStillFreshForLocation(String location)
 	{
 		CachedWeatherData cachedWeatherData = weatherDataCacheMap.get(location);
@@ -331,6 +349,10 @@ public class WeatherFetchTask implements RetainedTask
 	};
 
 	
+	/*
+	 * Initiate the synchronous weather lookup when the user presses the
+	 * "Look Up Sync" button.
+	 */
 	public void fetchWeatherSync(View v)
 	{
 		final WeatherCall weatherCall = mServiceConnectionSync.getInterface();
@@ -407,6 +429,9 @@ public class WeatherFetchTask implements RetainedTask
 	}
 	
 	
+	
+	
+	
 	/**
 	 * This class is used to store the weather data, location and 
 	 * the last updated time for caching purpose.
@@ -414,7 +439,7 @@ public class WeatherFetchTask implements RetainedTask
 	 * @author bwoo
 	 *
 	 */
-	class CachedWeatherData
+	private class CachedWeatherData
 	{
 		private String location;
 		private long lastUpdatedTime;

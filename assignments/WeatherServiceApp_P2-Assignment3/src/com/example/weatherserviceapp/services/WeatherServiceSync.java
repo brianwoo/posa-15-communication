@@ -60,12 +60,11 @@ public class WeatherServiceSync extends LifecycleLoggingService
      */
     WeatherCall.Stub mWeatherCallImpl = new WeatherCall.Stub() {
             /**
-             * Implement the AIDL WeatherCall expandWeather() method,
-             * which forwards to DownloadUtils getResults() to obtain
+             * Implement the AIDL WeatherCall getCurrentWeather() method,
+             * which forwards to Utils getResults() to obtain
              * the results from the Weather Web service and then
              * returns the results back to the Activity.
              */
-
 			@Override
 			public List<WeatherData> getCurrentWeather(String weather)
 					throws RemoteException

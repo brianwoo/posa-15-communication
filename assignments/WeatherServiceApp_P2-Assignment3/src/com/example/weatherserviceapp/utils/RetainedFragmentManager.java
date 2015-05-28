@@ -18,6 +18,10 @@ import android.util.Log;
 /**
  * @author bwoo
  * 
+ * RetainedFragmentManager to retain objects in memory
+ * even the activity goes away.  This class works
+ * slightly differently than Dr Schmidt's example.
+ * 
  */
 public class RetainedFragmentManager extends Fragment
 {
@@ -26,6 +30,7 @@ public class RetainedFragmentManager extends Fragment
 			.getSimpleName();
 	private WeakReference<Activity> mCallbacks;
 
+	
 	/**
 	 * Maps keys to objects.
 	 */
@@ -42,10 +47,6 @@ public class RetainedFragmentManager extends Fragment
 
 		// Retain this fragment across configuration changes.
 		setRetainInstance(true);
-
-		// Create and execute the background task.
-		// mTask = new DummyTask();
-		// mTask.execute();
 
 	}
 
@@ -78,11 +79,10 @@ public class RetainedFragmentManager extends Fragment
 		mCallbacks = new WeakReference<Activity>(activity);
 		Log.d(TAG, "----- RetainedFragmentManager.onAttach(). Activity="
 				+ activity.toString() + " -----");
-		
-
-
 	}
 
+	
+	
 	/**
 	 * Set the callback to null so we don't accidentally leak the Activity
 	 * instance.
@@ -113,6 +113,10 @@ public class RetainedFragmentManager extends Fragment
 	}
 	
 	
+	/**
+	 * This method is to reattach the activity to the task
+	 * after configuration change.
+	 */
 	private void reattachMainActivityToTask()
 	{
 		Collection<RetainedTask> tasks = mTasks.values();
