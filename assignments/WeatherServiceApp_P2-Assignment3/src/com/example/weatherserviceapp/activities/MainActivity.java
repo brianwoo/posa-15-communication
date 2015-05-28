@@ -110,7 +110,18 @@ public class MainActivity extends LifecycleLoggingActivity
 					.commit();
 		}
 		
-		mWeatherFetchTask = (WeatherFetchTask) mTaskFragment.get("WeatherFetchTask");
+		mWeatherFetchTask = (WeatherFetchTask) mTaskFragment.get("WeatherFetchTask");	
+		
+		// In the case where Android destroys background activities, 
+		// the mWeatherFetchTask seems to get destroyed as well.
+		// we need to recreate the task and add that to the fragment.
+		// this does not happen very often but it could happen when
+		// the "Don't keep activities" in Developer Settings is selected. 
+		if (null == mWeatherFetchTask)
+		{
+			mWeatherFetchTask = new WeatherFetchTask();
+			mTaskFragment.put("WeatherFetchTask", mWeatherFetchTask);
+		}
 
 	}
 
